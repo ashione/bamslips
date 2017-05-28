@@ -9,7 +9,6 @@ from datetime import date
 import glog
 
 class Fund_web : 
-    url = 'http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz&code=164906&page=1&per=20&sdate=2017-05-25&edate=2017-05-28&rt=0.6335554370129914'
     url_format =\
     'http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz&code={code}&page={page}&per={per_page}&sdate={start_date}&edate={end_date}&rt={rand_time}'
     header = { 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -35,14 +34,16 @@ class Fund_web :
         page,per_page = (1,days.days)
         code_url = self.url_format.format(code=code,page=page,per_page=per_page,\
                                           start_date=sdate.isoformat(),end_date=edate.isoformat(),rand_time=random.random())
-        print code_url
+
+        glog.info('request url : {}'.format(code_url))
+
         resp = requests.get(code_url,headers=self.header)
         matcher =\
         re.compile(u'.*?(?P<date>\d+-\d+-\d+).*?>(?P<net_asset_value>\d+\.\d+)<.*?>(?P<accumulated_net>\d+\.\d+)<.*?')
         #print resp.content,type(resp.content),len(resp.content)
         matched = matcher.finditer(resp.content)
-        value_dict = {}
         value_res =pd.DataFrame(columns=('date', 'net_asset_value', 'accumulated_net'))
+
         for matche_s in matched :
             x = matche_s.groupdict().values()
             value_s = pd.DataFrame([[datetime.strptime(x[0],"%Y-%m-%d"),float(x[1]),float(x[2])]], columns=('date', 'net_asset_value', 'accumulated_net'))
