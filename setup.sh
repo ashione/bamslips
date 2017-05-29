@@ -15,8 +15,8 @@ function install_requirements(){
     export PATH=./venv/bin:$PATH
 }
 if [ ! -d venv ]; then
-    pip install virutalenv
-    virutallenv venv
+    pip install virtualenv
+    virtualenv venv
 fi
 
 if [ ! -d data ]; then
