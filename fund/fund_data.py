@@ -4,19 +4,14 @@ import random
 from bs4 import BeautifulSoup as bs
 import re
 import pandas as pd
-from datetime import datetime
-from datetime import date
+from datetime import datetime,timedelta,date
+import dateutil.relativedelta
 import glog
+from bamslips.fund.fund_base import Fund_base
 
-class Fund_web : 
+class Fund_web(Fund_base) : 
     url_format =\
     'http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz&code={code}&page={page}&per={per_page}&sdate={start_date}&edate={end_date}&rt={rand_time}'
-    header = { 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-               'Accept-Encoding':'gzip, deflate, sdch',
-               'Accept-Language':'zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4',
-               'Connection':'keep-alive',
-               'User-Agent':'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Mobile Safari/537.36' 
-               }
     def get_pure_info(self,code='164906',sdate=None,edate=None):
         if not sdate:
             sdate = date(2000,1,1)
@@ -50,8 +45,31 @@ class Fund_web :
             value_res = pd.concat([value_res,value_s],ignore_index=True)
         res = value_res.set_index(['date']).sort_index()
         return res
+    def get_yesterday_fund_info(self,code):
+        today = date.today()
+        yesterday = today - timedelta(days=1)
+        return self.get_pure_info(code=code,sdate=yesterday,edate=today)
+
+    def get_last_week_fund_info(self,code):
+        today = date.today()
+        last_week = today - timedelta(weeks=1)
+        return self.get_pure_info(code=code,sdate=last_week,edate=today)
+
+    def get_last_month_fund_info(self,code):
+        today = date.today()
+        last_month = today - dateutil.relativedelta.relativedelta(months=1)
+        return self.get_pure_info(code=code,sdate=last_month,edate=today)
+
+    def get_last_year_fund_info(self,code):
+        today = date.today()
+        last_year = today - dateutil.relativedelta.relativedelta(years=1)
+        return self.get_pure_info(code=code,sdate=last_year,edate=today)
 
 if __name__ == '__main__':
     item = Fund_web()
-    item.get_pure_info(edate='2017-05x-22',sdate=date(2017,3,4))
+    #item.get_pure_info(edate='2017-05x-22',sdate=date(2017,3,4))
+    #print item.get_yesterday_fund_info(1)
+    #print item.get_last_week_fund_info(1)
+    print item.get_last_month_fund_info(1)
+    print item.get_last_year_fund_info(1)
 
