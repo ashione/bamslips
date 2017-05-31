@@ -8,11 +8,9 @@ import os
 from joblib import Parallel, delayed
 #coding=utf-8
 
-
 class Fund_stack(Fund_base) : 
 
     url_format = 'https://fundmobapi.eastmoney.com/FundMApi/FundInverstPositionNew.ashx?FCODE={code}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0'
-
     def get_fund_stack(self,code='000001'):
         fund_stack_url = self.url_format.format(code=code if isinstance(code,str) else '{:06d}'.format(code))
         resp = requests.get(fund_stack_url,headers=self.header)

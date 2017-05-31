@@ -7,6 +7,7 @@ from joblib import Parallel, delayed
 fund_web = Fund_web()
 time_out_list = []
 from datetime import datetime
+from bamslips.conf.fund_code_list import code_list
 
 def fetch_fund_code(i):
     try :
@@ -33,7 +34,7 @@ def append_info_to_csv(afp,res,t,csv_file):
 
 def append_fund_code_yesterday(code):
     try :
-        code = '{:06d}'.format(code)
+        code = '{:06d}'.format(code) if isinstance(code,int) else code
         csv_file = os.path.join(DATA_ROOT,code+'.csv')
         if not os.path.exists(csv_file):
             glog.info("no such code source file, code {}".format(code))
@@ -43,8 +44,8 @@ def append_fund_code_yesterday(code):
             t = pd.read_csv(fp).tail(1)
 
         with open(csv_file,'a') as afp:
-            #res = fund_web.get_yesterday_fund_info(code)
-            res = fund_web.get_pure_info(code,sdate='2017-03-25',edate='2017-05-26')
+            res = fund_web.get_yesterday_fund_info(code)
+            #res = fund_web.get_pure_info(code,sdate='2017-03-25',edate='2017-05-31')
             if len(res.index) < 1 :
                 glog.info("{} have {} lines".format(code,len(res.index)))
                 return 
@@ -57,9 +58,10 @@ def paralle_read_all_fund_info():
     Parallel(n_jobs=4)(delayed(fetch_fund_code)(i) for i in range(0,999999))
 
 def paralle_append_all_fund_yesterday_info():
-    Parallel(n_jobs=4)(delayed(append_fund_code_yesterday)(i) for i in range(0,999999))
+    Parallel(n_jobs=4)(delayed(append_fund_code_yesterday)(code) for code in code_list)
 
 if __name__ == '__main__':
     #Parallel(n_jobs=4)(delayed(fetch_fund_code)(i) for i in range(0,999999))
     #print time_out_list
-    print append_fund_code_yesterday(1)
+    #print append_fund_code_yesterday(539003)
+    paralle_append_all_fund_yesterday_info()
