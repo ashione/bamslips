@@ -38,11 +38,12 @@ def get_fund_realtime_net_info(code):
         glog.info('write {} fund stack into {}'.format(code,json_file))
 
 def append_realtime_info_to_csv(afp,res,t,csv_file):
-
-    t_date = datetime.strptime(t['date'].values[0],'%Y-%m-%d %H:%M:%S')
+    time_str = t['date'].values[0]
+    t_date = datetime.strptime(time_str,'%Y-%m-%d %H:%M:%S') if \
+        time_str.find(':')>0 else datetime.strptime(time_str,'%Y-%m-%d')
     for res_s_index in res.index:
         res_s = res[res.index==res_s_index]
-        res_s_datetime = pd.to_datetime(res_s.index.values[0])
+        res_s_datetime = pd.to_datetime(res_s.index.values[0],format='%Y-%m-%d %H:%M:%S')
         if res_s_datetime > t_date :
             res[res.index>=res_s_index].to_csv(afp,header=False)
             glog.info("append one commit code info to {}".format(csv_file))
@@ -98,6 +99,6 @@ if __name__ == '__main__' :
     item = Fund_realtime_detail()
     #print item.get_fund_realtime_net_unit(110006)
     #print item.get_fund_realtime_detail(110006)
-    #print append_fund_realtime_unit(110006)
-    paralle_get_fund_realtime_info_according_fund_code()
+    print append_fund_realtime_unit('003718')
+    #paralle_get_fund_realtime_info_according_fund_code()
 
