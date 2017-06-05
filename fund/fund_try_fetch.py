@@ -1,5 +1,5 @@
 from fund_data import Fund_web
-from bamslips.conf.settings import DATA_ROOT
+from bamslips.conf.settings import DATA_ROOT,PROJECT_JOB_NUM
 import glog
 import os
 import pandas as pd
@@ -55,13 +55,13 @@ def append_fund_code_yesterday(code):
         glog.error("append_fund_code_yesterday,{},timeout, exception msg : {}".format(code,e))
 
 def paralle_read_all_fund_info():
-    Parallel(n_jobs=4)(delayed(fetch_fund_code)(i) for i in range(0,999999))
+    Parallel(n_jobs=PROJECT_JOB_NUM)(delayed(fetch_fund_code)(i) for i in range(0,999999))
 
 def paralle_append_all_fund_yesterday_info():
-    Parallel(n_jobs=4)(delayed(append_fund_code_yesterday)(code) for code in code_list)
+    Parallel(n_jobs=PROJECT_JOB_NUM)(delayed(append_fund_code_yesterday)(code) for code in code_list)
 
 if __name__ == '__main__':
     #Parallel(n_jobs=4)(delayed(fetch_fund_code)(i) for i in range(0,999999))
     #print time_out_list
     #print append_fund_code_yesterday(539003)
-    paralle_append_all_fund_yesterday_info()
+    paralle_read_all_fund_info()
