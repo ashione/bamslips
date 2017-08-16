@@ -33,6 +33,16 @@ def append_info_to_csv(afp,res,t,csv_file):
             break
 
 def append_fund_code_yesterday(code):
+    def get_yesterday_fund_info(code):
+        return fund_web.get_yesterday_fund_info(code)
+    append_fund_code_by_func(code,get_yesterday_fund_info)
+
+def append_fund_code_last_week(code):
+    def get_last_week_fund_info(code):
+        return fund_web.get_last_week_fund_info(code)
+    append_fund_code_by_func(code,get_last_week_fund_info)
+
+def append_fund_code_by_func(code,func):
     try :
         code = '{:06d}'.format(code) if isinstance(code,int) else code
         csv_file = os.path.join(DATA_ROOT,code+'.csv')
@@ -44,7 +54,7 @@ def append_fund_code_yesterday(code):
             t = pd.read_csv(fp).tail(1)
 
         with open(csv_file,'a') as afp:
-            res = fund_web.get_yesterday_fund_info(code)
+            res = func(code)
             #res = fund_web.get_pure_info(code,sdate='2017-03-25',edate='2017-05-31')
             if len(res.index) < 1 :
                 glog.info("{} have {} lines".format(code,len(res.index)))
@@ -60,8 +70,12 @@ def paralle_read_all_fund_info():
 def paralle_append_all_fund_yesterday_info():
     Parallel(n_jobs=PROJECT_JOB_NUM)(delayed(append_fund_code_yesterday)(code) for code in code_list)
 
+def paralle_append_all_fund_last_week_info():
+    Parallel(n_jobs=PROJECT_JOB_NUM)(delayed(append_fund_code_last_week)(code) for code in code_list)
+
 if __name__ == '__main__':
     #Parallel(n_jobs=4)(delayed(fetch_fund_code)(i) for i in range(0,999999))
     #print time_out_list
     #print append_fund_code_yesterday(539003)
-    paralle_read_all_fund_info()
+    #paralle_read_all_fund_info()
+    paralle_append_all_fund_last_week_info()

@@ -91,8 +91,11 @@ def append_fund_realtime_unit(code):
 def paralle_get_fund_detail_according_fund_code():
     Parallel(n_jobs=4)(delayed(get_fund_realtime_net_info)(code) for code in code_list)
 
-def paralle_get_fund_realtime_info_according_fund_code():
-    Parallel(n_jobs=4)(delayed(append_fund_realtime_unit)(code) for code in code_list)
+def paralle_get_fund_realtime_info_according_fund_code(codes=None):
+    if codes:
+        Parallel(n_jobs=4)(delayed(append_fund_realtime_unit)(code) for code in codes)
+    else :
+        Parallel(n_jobs=4)(delayed(append_fund_realtime_unit)(code) for code in code_list)
 
 if __name__ == '__main__' :
     #paralle_get_fund_detail_according_fund_code()
