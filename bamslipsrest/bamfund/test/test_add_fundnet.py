@@ -2,6 +2,8 @@
 import requests
 from datetime import datetime
 from bamslips.fund.fund_data import Fund_web
+from bamfund.models import Fund,FundNet
+import glog
 
 
 def add_fund_net():
@@ -27,6 +29,19 @@ def add_fund_net():
         result = requests.post(url,json=fund_net_test_json)
 
         print result.content
+def add_all_fund_net():
+    fund_web = Fund_web()
+    fund_list = Fund.objects.all()
+    for fund in fund_list : 
+        fund_data =  fund_web.get_last_month_fund_info(code = fund.fund_code)
+        for index,fund_item in fund_data.iterrows():
+            try :
+                FundNet.objects.create(fund_code = fund,
+                        date=index.strftime('%Y-%m-%d'),
+                        net_asset_value=fund_item.net_asset_value,
+                        accumulated_net = fund_item.accumulated_net)
+            except IntegrityError,e:
+                glog.info("integrityError : {}".format(e))
 
 def add_fund():
     url = 'http://127.0.0.1:8000/funds/'
@@ -41,3 +56,4 @@ def add_fund():
 
 #add_fund()
 add_fund_net()
+#add_all_fund_net()
