@@ -98,7 +98,7 @@ DATABASES = {
 	    'NAME': 'bamslips',    
 	    'USER': 'bamslips',
 	    'PASSWORD': 'skyblue',    
-	    'HOST': 'localhost',
+	    'HOST': 'zuolx.com',
             'CHARSET': 'utf8',
             'COLLATION': 'utf8_general_ci',
     }   

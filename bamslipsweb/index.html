@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- 引入 ECharts 文件 -->
+    <title>ECharts</title>
+    <script src="js/echarts.js"></script>
+    <script src="js/vintage.js"></script>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+</head>
+
+<body>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 800px;height:600px;"></div>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'), 'vintage');
+
+        option = {
+            tooltip: {
+                trigger: 'axis',
+                position: function(pt) {
+                    return [pt[0], '10%'];
+                }
+            },
+            title: {
+                left: 'center',
+                text: '大数据量面积图',
+            },
+            toolbox: {
+                feature: {
+                    dataZoom: {
+                        yAxisIndex: 'none'
+                    },
+                    restore: {},
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: []
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%']
+            },
+            dataZoom: [{
+                type: 'inside',
+                start: 0,
+                end: 10
+            }, {
+                start: 0,
+                end: 10,
+                handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                handleSize: '80%',
+                handleStyle: {
+                    color: '#fff',
+                    shadowBlur: 3,
+                    shadowColor: 'rgba(0, 0, 0, 0.6)',
+                    shadowOffsetX: 2,
+                    shadowOffsetY: 2
+                }
+            }],
+            series: [{
+                name: '模拟数据',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                sampling: 'average',
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(255, 70, 131)'
+                    }
+                },
+                areaStyle: {
+                    normal: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                            offset: 0,
+                            color: 'rgb(255, 158, 68)'
+                        }, {
+                            offset: 1,
+                            color: 'rgb(255, 70, 131)'
+                        }])
+                    }
+                },
+                data: []
+            }]
+        };
+
+        myChart.setOption(option);
+        var fund_name;
+        $.get("http://zuolx.com:8000/funds/?format=json&code=210004").done(function(fund) {
+            fund_name = fund.results[0].fund_name;
+        });
+        // 异步加载数据
+        $.get('http://zuolx.com:8000/fund_net/?format=json&code=210004').done(function(fund_list) {
+            // 填入数据
+            var date = []
+            var fund_net = []
+            console.log(fund_list.results[0])
+            for (var i in fund_list.results) {
+                //var item = data.results[i]
+                //console.log(item)
+                //console.log(data.results[i].date)
+                //console.log(item['date'])
+                date.push([new Date(Date.parse(fund_list.results[i]['date']))]);
+                fund_net.push(fund_list.results[i].net_asset_value);
+            }
+            myChart.setOption({
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: date
+
+                },
+                title: {
+                    left: 'center',
+                    text: fund_name,
+                },
+                series: [{
+                    name: '真实数据',
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'none',
+                    sampling: 'average',
+                    itemStyle: {
+                        normal: {
+                            color: 'rgb(255, 70, 131)'
+                        }
+                    },
+                    areaStyle: {
+                        normal: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: 'rgb(255, 158, 68)'
+                            }, {
+                                offset: 1,
+                                color: 'rgb(255, 70, 131)'
+                            }])
+                        }
+                    },
+                    data: fund_net
+                }]
+
+            });
+
+        });
+    </script>
+</body>
+
+</html>
