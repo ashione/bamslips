@@ -14,8 +14,13 @@ from rest_framework import permissions
 from datetime import datetime,timedelta,date
 import glog
 from rest_framework.exceptions import APIException,ValidationError
+from django.shortcuts import render_to_response
+
 #from rest_framework.pagination import PageNumberPagination
 #from ipdb import set_trace
+
+def index(req):
+   return render_to_response('index.html', {'title':'My first page', 'user':'pmghong'})
 
 
 class FundList(generics.ListCreateAPIView):

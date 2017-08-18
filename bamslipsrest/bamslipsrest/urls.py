@@ -17,6 +17,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 urlpatterns = [
+    #url(r'^index/$',include('django.views.static.serve'), {'document_root': '~/bamslips/bamslipsweb/index.html'}),
     url(r'^admin/', admin.site.urls),
     url(r'^', include('bamfund.urls')),
     url(r'^api-auth/', include('rest_framework.urls',
