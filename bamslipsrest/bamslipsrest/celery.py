@@ -17,6 +17,7 @@ app = Celery('bamslipsrest')
 #   should have a `CELERY_` prefix.
 #app.config_from_object('django.conf:settings', namespace='CELERY')
 app.config_from_object('django.conf:settings')
+#app.conf.update(CELERY_RESULT_BACKEND='djcelery.backends.database.DatabaseBackend')
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)

@@ -14,13 +14,41 @@ from rest_framework import permissions
 from datetime import datetime,timedelta,date
 import glog
 from rest_framework.exceptions import APIException,ValidationError
-from django.shortcuts import render_to_response
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout 
+from django.shortcuts import render_to_response,redirect,render
+from django.template import RequestContext
+from django.http import HttpResponseRedirect 
+ 
 
 #from rest_framework.pagination import PageNumberPagination
 #from ipdb import set_trace
 
-def index(req):
-   return render_to_response('index.html', {'title':'My first page', 'user':'pmghong'})
+def index(request):
+   #return render_to_response('index.html', {'title':'My first page', 'user':'pmghong'})
+   is_login = request.user.is_active if request.user else False
+   return render(request, 'index.html', {'logined':is_login})
+
+def user_login(request):
+    username = password = ''
+    
+    if request.POST:
+        username = request.POST['username']
+        password = request.POST['password']
+        glog.info("{},{}".format(username,password))
+
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request,user)
+                return HttpResponseRedirect('/v1/funds/')
+    #return render_to_response('login.html', context_instance=RequestContext(request))
+    return render(request, 'login.html', {})
+
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect('/index/')
 
 
 class FundList(generics.ListCreateAPIView):

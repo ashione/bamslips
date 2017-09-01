@@ -26,15 +26,39 @@ SECRET_KEY = '2o0d8yrr$4+=6fx(7y3%85_xe*kzk7iav=1%qcy+q$@j#z8=9g'
 DEBUG = True
 #DEBUG = False
 
-ALLOWED_HOSTS = ['zuolx.com']
+ALLOWED_HOSTS = ['zuolx.com','localhost','127.0.0.1']
+
+# Internationalization
+# https://docs.djangoproject.com/en/1.11/topics/i18n/
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'Asia/Shanghai'
+
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
 
 
 #CELERY_RESULT_BACKEND = 'django-db'
 # Application definition
-import djcelery
-djcelery.setup_loader()
+#import djcelery
+#djcelery.setup_loader()
+
 BROKER_URL= 'amqp://guest@localhost//'
+
 CELERY_RESULT_BACKEND = 'amqp://guest@localhost//'
+
+CELERY_TIMEZONE = TIME_ZONE
+#CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+#CELERY_RESULT_BACKEND = 'djcelery.backends.database.DatabaseBackend'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -101,6 +125,7 @@ DATABASES = {
 	    'HOST': 'localhost',
             'CHARSET': 'utf8',
             'COLLATION': 'utf8_general_ci',
+            'TIME_ZONE' : TIME_ZONE,
     }   
 }
 
@@ -124,18 +149,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/1.11/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'Asia/Shanghai'
-
-USE_I18N = True
-
-USE_L10N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
