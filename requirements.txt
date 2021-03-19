@@ -21,7 +21,7 @@ django-celery==3.2.1
 django-celery-results==1.0.1
 django-cors-headers==2.1.0
 django-filter==1.0.4
-djangorestframework==3.6.3
+djangorestframework==3.11.2
 entrypoints==0.2.2
 enum34==1.1.6
 funcsigs==1.0.2
