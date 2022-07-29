@@ -46,7 +46,7 @@ kombu==3.0.37
 Markdown==2.6.8
 MarkupSafe==1.0
 matplotlib==2.0.2
-mistune==0.7.4
+mistune==2.0.3
 MySQL-python==1.2.5
 nbconvert==5.2.1
 nbformat==4.3.0
